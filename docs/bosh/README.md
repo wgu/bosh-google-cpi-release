@@ -255,15 +255,15 @@ Before working this section, you must have deployed the supporting infrastructur
     - name: private
       type: manual
       subnets:
-      - range: 10.0.0.0/29
-        gateway: 10.0.0.1
-        static: [10.0.0.3-10.0.0.7]
+      - range: {{RANGE}}
+        gateway: {{GATEWAY}}
+        static: [{{STATIC}}]
         cloud_properties:
-          network_name: cf
-          subnetwork_name: bosh-{{REGION}}
+          network_name: {{NETWORK_NAME}}
+          subnetwork_name: {{SUBNET_NAME}}
           ephemeral_external_ip: true
           tags:
-            - bosh-internal
+            - {{TAGS}}
 
   jobs:
     - name: bosh
@@ -290,7 +290,7 @@ Before working this section, you must have deployed the supporting infrastructur
 
       networks:
         - name: private
-          static_ips: [10.0.0.6]
+          static_ips: [{{DIRECTOR_IP}}]
           default:
             - dns
             - gateway
@@ -310,13 +310,13 @@ Before working this section, you must have deployed the supporting infrastructur
           adapter: postgres
 
         dns:
-          address: 10.0.0.6
+          address: {{DIRECTOR_IP}}
           domain_name: microbosh
           db: *db
           recursor: 169.254.169.254
 
         blobstore:
-          address: 10.0.0.6
+          address: {{DIRECTOR_IP}}
           port: 25250
           provider: dav
           director:
@@ -349,11 +349,11 @@ Before working this section, you must have deployed the supporting infrastructur
           project: {{PROJECT_ID}}
 
         agent:
-          mbus: nats://nats:nats-password@10.0.0.6:4222
+          mbus: nats://nats:nats-password@{{DIRECTOR_IP}}:4222
           ntp: *ntp
           blobstore:
              options:
-               endpoint: http://10.0.0.6:25250
+               endpoint: http://{{DIRECTOR_IP}}:25250
                user: agent
                password: agent-password
 
@@ -366,12 +366,12 @@ Before working this section, you must have deployed the supporting infrastructur
       release: bosh-google-cpi
 
     ssh_tunnel:
-      host: 10.0.0.6
+      host: {{DIRECTOR_IP}}
       port: 22
-      user: bosh
+      user: {{USERNAME_FOR_SSH_KEY}}
       private_key: {{SSH_KEY_PATH}}
 
-    mbus: https://mbus:mbus-password@10.0.0.6:6868
+    mbus: https://mbus:mbus-password@{{DIRECTOR_IP}}:6868
 
     properties:
       google: *google_properties
